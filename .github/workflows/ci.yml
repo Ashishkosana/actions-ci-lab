@@ -11,6 +11,7 @@ on:
     branches: [main]
 
 # A job is one virtual machine plus the steps that share it.
+# These two jobs do not set "needs:", so they start together on separate runners.
 jobs:
   test:
     name: Run pytest
@@ -31,3 +32,21 @@ jobs:
 
       - name: Run pytest
         run: pytest
+
+  lint:
+    name: Run ruff
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install -e ".[dev]"
+
+      - name: Run ruff
+        run: ruff check
