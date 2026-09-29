@@ -2,7 +2,7 @@
 
 This repository is a teaching lab for **GitHub Actions** and the **software development lifecycle (SDLC)**.
 
-The application is intentionally tiny: a Python function, `greet(name) -> str`, with pytest coverage of the happy path. The important part is the pipeline around it. Every push to `main`, and every pull request that targets `main`, starts a continuous integration (CI) workflow that installs the package, runs the tests, and lints the code. The goal is to see a change move from a branch, through a pull request, into automated checks before it is trusted on the default branch.
+The application is intentionally tiny: a Python function, `greet(name, shout=False) -> str`. It returns `Hello, {name}!`, or the same text in uppercase when `shout` is true. Pytest covers both. The important part is the pipeline around it. Every push to `main`, and every pull request that targets `main`, starts a continuous integration (CI) workflow that installs the package, runs the tests, and lints the code. The goal is to see a change move from a branch, through a pull request, into automated checks before it is trusted on the default branch.
 
 Repository: [Ashishkosana/actions-ci-lab](https://github.com/Ashishkosana/actions-ci-lab)
 
@@ -11,7 +11,7 @@ Repository: [Ashishkosana/actions-ci-lab](https://github.com/Ashishkosana/action
 | Path | Role |
 | --- | --- |
 | `src/greeter/` | The package. `greet` lives in `src/greeter/__init__.py`. |
-| `tests/test_greet.py` | Pytest tests for the happy path. |
+| `tests/test_greet.py` | Pytest tests for the default greeting and for `shout=True`. |
 | `pyproject.toml` | Package metadata, pytest configuration, and the `ruff` dev dependency. |
 | `.github/workflows/ci.yml` | The CI workflow GitHub Actions runs. |
 
@@ -83,3 +83,4 @@ ruff check
    - Red run: https://github.com/Ashishkosana/actions-ci-lab/actions/runs/36644352770
    - Green run: https://github.com/Ashishkosana/actions-ci-lab/actions/runs/36644428642
 2. **Run two jobs in parallel.** The CI workflow runs `test` (`pytest`) and `lint` (`ruff check`) at the same time. Each job has its own `ubuntu-latest` runner and its own Python 3.12 setup. Because neither job sets `needs:`, one does not wait for the other. Both checks must pass before the change is ready to merge.
+3. **Let both jobs judge a small feature.** `greet` takes `shout=False`. With `shout=True` the greeting is uppercase, and new tests cover that. The pull request for this change stays open for review once **CI / Run pytest** and **CI / Run ruff** are green.
